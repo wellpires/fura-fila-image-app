@@ -8,6 +8,9 @@ public class NewImageResponse {
 		this.id = id;
 	}
 
+	public NewImageResponse() {
+	}
+
 	public Long getId() {
 		return id;
 	}

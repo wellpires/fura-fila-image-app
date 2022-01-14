@@ -8,7 +8,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,13 +43,15 @@ public class ImageController implements ImageResource {
 
 		Resource imageBytes = this.imageService.findImageById(id);
 
-		BodyBuilder bodyBuilder = ResponseEntity.ok();
+		ResponseEntity<Resource> response = ResponseEntity.ok().build();
 		if (Objects.nonNull(imageBytes)) {
-			bodyBuilder.contentType(MediaType.APPLICATION_OCTET_STREAM).header(HttpHeaders.CONTENT_DISPOSITION,
-					"attachment; filename=\"" + imageBytes.getFilename() + "\"").body(imageBytes);
+			response = ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
+					.header(HttpHeaders.CONTENT_DISPOSITION,
+							String.format("attachment; filename=\"%s\"", imageBytes.getFilename()))
+					.body(imageBytes);
 		}
 
-		return bodyBuilder.build();
+		return response;
 	}
 
 	@Override

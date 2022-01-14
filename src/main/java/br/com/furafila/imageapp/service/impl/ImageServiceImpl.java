@@ -14,6 +14,8 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import br.com.furafila.imageapp.enums.ValidExtensions;
+import br.com.furafila.imageapp.exception.FileExtensionNotValidException;
 import br.com.furafila.imageapp.exception.ImageNotFoundException;
 import br.com.furafila.imageapp.model.Image;
 import br.com.furafila.imageapp.repository.ImageRepository;
@@ -45,7 +47,7 @@ public class ImageServiceImpl implements ImageService {
 		Image image = imageRepository.findById(id).orElseThrow(ImageNotFoundException::new);
 
 		UrlResource urlResource = null;
-		if (Objects.nonNull(image.getImage()) || StringUtils.isNotBlank(image.getFileExtension())) {
+		if (Objects.nonNull(image.getImage()) && StringUtils.isNotBlank(image.getFileExtension())) {
 			Path tempFile = Files.createTempFile("tmp", ".".concat(image.getFileExtension()));
 			FileUtils.writeByteArrayToFile(tempFile.toFile(), image.getImage());
 
@@ -59,10 +61,15 @@ public class ImageServiceImpl implements ImageService {
 	@Override
 	public void edit(MultipartFile file, Long id) throws IOException {
 
+		String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+		if (!ValidExtensions.isExtensionValid(extension)) {
+			throw new FileExtensionNotValidException();
+		}
+
 		Image image = imageRepository.findById(id).orElseThrow(ImageNotFoundException::new);
 
 		image.setImage(file.getBytes());
-		image.setFileExtension(FilenameUtils.getExtension(file.getOriginalFilename()));
+		image.setFileExtension(extension);
 
 		imageRepository.save(image);
 
