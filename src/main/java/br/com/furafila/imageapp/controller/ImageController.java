@@ -47,7 +47,7 @@ public class ImageController implements ImageResource {
 		if (Objects.nonNull(imageBytes)) {
 			response = ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
 					.header(HttpHeaders.CONTENT_DISPOSITION,
-							String.format("attachment; filename=\"%s\"", imageBytes.getFilename()))
+							String.format("%s", imageBytes.getFilename()))
 					.body(imageBytes);
 		}
 
