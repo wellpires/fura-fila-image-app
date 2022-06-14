@@ -46,8 +46,7 @@ public class ImageController implements ImageResource {
 		ResponseEntity<Resource> response = ResponseEntity.ok().build();
 		if (Objects.nonNull(imageBytes)) {
 			response = ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
-					.header(HttpHeaders.CONTENT_DISPOSITION,
-							String.format("%s", imageBytes.getFilename()))
+					.header(HttpHeaders.CONTENT_DISPOSITION, String.format("%s", imageBytes.getFilename()))
 					.body(imageBytes);
 		}
 
@@ -55,7 +54,7 @@ public class ImageController implements ImageResource {
 	}
 
 	@Override
-	@PutMapping(path = "/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	@PutMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> edit(@RequestParam("file") MultipartFile file, @PathVariable("id") Long id)
 			throws IOException {
 
